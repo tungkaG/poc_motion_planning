@@ -10,6 +10,7 @@
 
 // #include "include/TrajectoryEvaluator.hpp"
 #include "TrajectoryHandler.hpp"
+#include "CoordinateSystemWrapper.hpp"
 
 // Global params
 static constexpr int num_samples_d = 9;
@@ -23,6 +24,7 @@ static double N = 30; //  self.N = int(config_plan.planning.planning_horizon / c
 static double dT = 0.1;
     
 using SamplingMatrixXd = Eigen::Matrix<double, Eigen::Dynamic, 13, Eigen::RowMajor>;
+using RowMatrixXd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
 SamplingMatrixXd generate_sampling_matrix_cstyle(
     double* t0_range, size_t t0_size,
@@ -224,6 +226,13 @@ int main() {
     TrajectoryHandler trajectory_handler(0.1, desired_velocity);
     trajectory_handler.generateTrajectories(sampling_matrix, false);
     // trajectory_handler.evaluateTrajectory(trajectory_handler.m_trajectories[0]);
+
+    RowMatrixXd path(3, 2);  // 3 points (x,y)
+    path << 1.0, 2.0,   // Point 1
+            3.0, 4.0,   // Point 2
+            5.0, 6.0;   // Point 3
+
+    CoordinateSystemWrapper coordinate_system_wrapper(path);  // Pass the path to the wrapper
 }
 
 

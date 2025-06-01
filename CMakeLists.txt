@@ -14,6 +14,7 @@ add_subdirectory(cost_functions)
 add_subdirectory(feasibility_functions)
 add_subdirectory(trajectory_sample)
 add_subdirectory(trajectory_handler)
+add_subdirectory(third_party/crdc)
 
 # Add sources
 # file(GLOB SOURCES "src/*.cpp" "main.cpp")

@@ -15,7 +15,7 @@
 #include "polynomial.hpp"
 #include "util.hpp"
 
-#include <spdlog/spdlog.h>
+// #include <spdlog/spdlog.h>
 
 FillCoordinates::FillCoordinates(bool lowVelocityMode, 
                                  double initialOrienation, 
@@ -126,7 +126,7 @@ void FillCoordinates::evaluateTrajectory(TrajectorySample& trajectory)
 
         auto s_idx_opt = m_coordinateSystem->getS_idx(trajectory.m_curvilinearSample.s[iii]);
         if (!s_idx_opt.has_value()) {
-            SPDLOG_INFO("marking trajectory {} invalid: s={} is out of bounds", trajectory.m_uniqueId.value_or(-1), trajectory.m_curvilinearSample.s[iii]);
+            // SPDLOG_INFO("marking trajectory {} invalid: s={} is out of bounds", trajectory.m_uniqueId.value_or(-1), trajectory.m_curvilinearSample.s[iii]);
             trajectory.m_valid = false;
             trajectory.m_feasible = false;
             return;
@@ -195,14 +195,14 @@ void FillCoordinates::evaluateTrajectory(TrajectorySample& trajectory)
             trajectory.m_valid = false;
             trajectory.m_feasible = false;
 
-            SPDLOG_INFO("marking trajectory {} invalid: failed CCS conversion for s={}", trajectory.m_uniqueId.value_or(-1), trajectory.m_curvilinearSample.s[iii]);
+            // SPDLOG_INFO("marking trajectory {} invalid: failed CCS conversion for s={}", trajectory.m_uniqueId.value_or(-1), trajectory.m_curvilinearSample.s[iii]);
 
             return;
         }
     }
 
-    if (infeasible_negative_velocity) {
-        SPDLOG_DEBUG("trajectory {} infeasible due to negative velocity", trajectory.m_uniqueId.value_or(-1));
-    }
+    // if (infeasible_negative_velocity) {
+    //     // SPDLOG_DEBUG("trajectory {} infeasible due to negative velocity", trajectory.m_uniqueId.value_or(-1));
+    // }
 }
 
