@@ -10,6 +10,8 @@
 #include "TrajectoryStrategy.hpp"
 #include "polynomial.hpp"
 
+#include "FillCoordinates.hpp"
+
 using SamplingMatrixXd = Eigen::Matrix<double, Eigen::Dynamic, 13, Eigen::RowMajor>;
 
 class TrajectoryHandler
@@ -48,6 +50,8 @@ public:
      */
     void generateTrajectories(const SamplingMatrixXd& samplingMatrix, bool lowVelocityMode);
     void evaluateTrajectory(TrajectorySample& trajectory);
+    void evaluateAllTrajectories();
+    void addFillCoordinates(std::unique_ptr<FillCoordinates> function);
     
 
     std::vector<TrajectorySample> m_trajectories;

@@ -17,11 +17,13 @@ add_library(cost_functions STATIC
   src/util.cpp
 )
 
+# find_package(Eigen3 REQUIRED NO_MODULE)
+
 target_include_directories(cost_functions PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/include
-  ${CMAKE_SOURCE_DIR}/eigen-3.4.0
+  # ${CMAKE_SOURCE_DIR}/eigen-3.4.0
 )
 
 # target_include_directories(cost_functions PRIVATE SYSTEM ${EIGEN3_INCLUDE_DIR})
 
-target_link_libraries(cost_functions PUBLIC trajectory_sample)
+target_link_libraries(cost_functions PUBLIC Eigen3::Eigen trajectory_sample)

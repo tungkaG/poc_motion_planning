@@ -1,4 +1,3 @@
 hardcode reference path and make a coordinate system attribute to be fed to fillcoordinates
 implement add fillcoordinates func to trajectory handler
 add some function in TrajectorySample to chnage longi and lateral traj to cartesian and curvlinear
-add third party to cmake

@@ -28,6 +28,8 @@
 #include "CalculatePositiveVelocityOffsetCost.hpp"
 #include "CalculateVelocityOffsetCost.hpp"
 
+#include "FillCoordinates.hpp"
+
 #include "TrajectorySample.hpp"
 #include "TrajectoryStrategy.hpp"
 
@@ -52,7 +54,7 @@ std::map<std::string, double> vehicle_params = {
     {"length", 4.508},
     {"width", 1.61},
     {"mass", 1093.3},
-    {"wheelbase", 2.59},
+    {"wheelbase", 2.5789},
     {"delta_max", 1.066},
     {"delta_min", -1.066},
     {"a_max", 11.5},
@@ -68,12 +70,12 @@ std::map<std::string, double> vehicle_params = {
 TrajectoryHandler::TrajectoryHandler(double dt, double desired_velocity)
     : m_dt(dt)
 {
-    functions_.reserve(8);
+    functions_.reserve(9); // 1 for fill coordinates
     
-    functions_.emplace_back(std::make_unique<CheckAccelerationConstraint>(vehicle_params["v_switch"], vehicle_params["a_max"], true));
-    functions_.emplace_back(std::make_unique<CheckCurvatureConstraint>(vehicle_params["delta_max"], vehicle_params["wheelbase"], true));
-    functions_.emplace_back(std::make_unique<CheckCurvatureRateConstraint>(vehicle_params["wheelbase"], vehicle_params["v_delta_max"], true));
-    functions_.emplace_back(std::make_unique<CheckYawRateConstraint>(vehicle_params["delta_max"], vehicle_params["wheelbase"], true));
+    functions_.emplace_back(std::make_unique<CheckAccelerationConstraint>(vehicle_params["v_switch"], vehicle_params["a_max"], false));
+    functions_.emplace_back(std::make_unique<CheckCurvatureConstraint>(vehicle_params["delta_max"], vehicle_params["wheelbase"], false));
+    functions_.emplace_back(std::make_unique<CheckCurvatureRateConstraint>(vehicle_params["wheelbase"], vehicle_params["v_delta_max"], false));
+    functions_.emplace_back(std::make_unique<CheckYawRateConstraint>(vehicle_params["delta_max"], vehicle_params["wheelbase"], false));
 
     // functions_.emplace_back(std::make_unique<CalculateAccelerationCost>("CalculateAccelerationCost", cost_weights["acceleration"]));
     functions_.emplace_back(std::make_unique<CalculateDistanceToReferencePathCost>("CalculateDistanceToReferencePathCost", cost_weights["distance_to_reference_path"]));
@@ -147,14 +149,27 @@ void TrajectoryHandler::generateTrajectories(const SamplingMatrixXd& samplingMat
     }
 }
 
+void TrajectoryHandler::addFillCoordinates(std::unique_ptr<FillCoordinates> function) {
+    if (functions_.size() >= 9) {
+        functions_.erase(functions_.begin()); // Remove the frist function if it exists
+    }
+    functions_.emplace(functions_.begin(), std::move(function));
+}
+
 void TrajectoryHandler::evaluateTrajectory(TrajectorySample& trajectory) {
 
     // Evaluate fillcoordinates_func first
 
     for (auto& func : functions_) {
-        std::string funName = func->getFunctionName();
-        std::cout << "Evaluating function: " << funName << std::endl;
+        // std::string funName = func->getFunctionName();
+        // std::cout << "Evaluating function: " << funName << std::endl;
         func->evaluateTrajectory(trajectory);
     }
 
+}
+
+void TrajectoryHandler::evaluateAllTrajectories() {
+    for (auto& trajectory : m_trajectories) {
+        evaluateTrajectory(trajectory);
+    }
 }

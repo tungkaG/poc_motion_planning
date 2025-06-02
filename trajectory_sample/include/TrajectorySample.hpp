@@ -53,9 +53,27 @@ public:
 
     std::optional<int> m_uniqueId;
 
+    std::optional<int> m_currentTimeStep;
+
     bool m_valid = true;
     bool m_feasible = true;
 
+    /**
+     * @brief Initialize arrays of the curvilinear and cartesian samples with the specified size.
+     *
+     * @param size The size to resize the arrays to.
+     */
+    void initArraysWithSize(size_t size);
+
+    /**
+     * @brief Add a cost value to the list of cost values. The weight must therefore be speicified
+     * in the costWeightMap. Add a costWeight to the map if it is not specified yet by
+     * handler.addCostWeight(std::string functionName, double weight).
+     *
+     * @param costFunctionName
+     * @param cost
+     * @param costWeighted
+     */
     void addCostValueToList(std::string costFunctionName, double cost, double costWeighted);
 
     void addFeasabilityValueToList(std::string costFunctionName, double value);

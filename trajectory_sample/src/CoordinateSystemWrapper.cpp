@@ -22,7 +22,7 @@ CoordinateSystemWrapper::CoordinateSystemWrapper(Eigen::Ref<RowMatrixXd> refPath
     m_refCurvD = util::computeGradient(m_refCurv, m_refPos);
     m_refCurvDD = util::computeGradient(m_refCurvD, m_refPos);
     
-    std::cout << "CoordinateSystemWrapper" << std::endl;
+    std::cout << "CoordinateSystemWrapper initialized" << std::endl;
 }
 
 std::optional<int> CoordinateSystemWrapper::getS_idx(double s) const

@@ -37,6 +37,8 @@ void FillCoordinates::evaluateTrajectory(TrajectorySample& trajectory)
     const Eigen::VectorXd& refCurvD = m_coordinateSystem->m_refCurvD;
     const auto& ccs = m_coordinateSystem->getSystem();
 
+    // std::cout << "Ref path: " << m_coordinateSystem->getRefPath() << std::endl; while(1);
+
     double dp {0.0};
     double dpp {0.0};
 
@@ -127,6 +129,9 @@ void FillCoordinates::evaluateTrajectory(TrajectorySample& trajectory)
         auto s_idx_opt = m_coordinateSystem->getS_idx(trajectory.m_curvilinearSample.s[iii]);
         if (!s_idx_opt.has_value()) {
             // SPDLOG_INFO("marking trajectory {} invalid: s={} is out of bounds", trajectory.m_uniqueId.value_or(-1), trajectory.m_curvilinearSample.s[iii]);
+            std::cerr << "marking trajectory " << trajectory.m_uniqueId.value_or(-1) 
+                      << " invalid: s=" << trajectory.m_curvilinearSample.s[iii] 
+                      << " is out of bounds" << std::endl;
             trajectory.m_valid = false;
             trajectory.m_feasible = false;
             return;
@@ -196,13 +201,18 @@ void FillCoordinates::evaluateTrajectory(TrajectorySample& trajectory)
             trajectory.m_feasible = false;
 
             // SPDLOG_INFO("marking trajectory {} invalid: failed CCS conversion for s={}", trajectory.m_uniqueId.value_or(-1), trajectory.m_curvilinearSample.s[iii]);
+            std::cerr << "marking trajectory " << trajectory.m_uniqueId.value_or(-1) 
+                      << " invalid: failed CCS conversion for s=" << trajectory.m_curvilinearSample.s[iii] 
+                      << std::endl;
 
             return;
         }
     }
 
-    // if (infeasible_negative_velocity) {
-    //     // SPDLOG_DEBUG("trajectory {} infeasible due to negative velocity", trajectory.m_uniqueId.value_or(-1));
-    // }
+    if (infeasible_negative_velocity) {
+        // SPDLOG_DEBUG("trajectory {} infeasible due to negative velocity", trajectory.m_uniqueId.value_or(-1));
+        std::cerr << "trajectory " << trajectory.m_uniqueId.value_or(-1) 
+                  << " infeasible due to negative velocity" << std::endl;
+    }
 }
 

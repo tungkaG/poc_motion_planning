@@ -26,6 +26,27 @@ TrajectorySample::TrajectorySample(double dT,
 TrajectorySample::TrajectorySample(CartesianSample m_cartesianSample, CurviLinearSample m_curvilinearSample, size_t m_size, size_t m_actualSize, double m_dT)
 : m_cartesianSample(m_cartesianSample), m_curvilinearSample(m_curvilinearSample), m_size(m_size), m_actualSize(m_actualSize), m_dT(m_dT) {}
 
+void TrajectorySample::initArraysWithSize(size_t size)
+{
+    m_size = size;
+
+    m_curvilinearSample.s.resize(size);
+    m_curvilinearSample.ss.resize(size);
+    m_curvilinearSample.sss.resize(size);
+    m_curvilinearSample.d.resize(size);
+    m_curvilinearSample.dd.resize(size);
+    m_curvilinearSample.ddd.resize(size);
+    m_curvilinearSample.theta.resize(size);
+
+    m_cartesianSample.x.resize(size);
+    m_cartesianSample.y.resize(size);
+    m_cartesianSample.theta.resize(size);
+    m_cartesianSample.kappa.resize(size);
+    m_cartesianSample.kappaDot.resize(size);
+    m_cartesianSample.acceleration.resize(size);
+    m_cartesianSample.velocity.resize(size);
+}
+
 void TrajectorySample::addCostValueToList(std::string costFunctionName, double cost, double costWeighted)
 {
     m_cost += costWeighted;
