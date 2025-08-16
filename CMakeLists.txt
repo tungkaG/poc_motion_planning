@@ -20,6 +20,7 @@ add_subdirectory(feasibility_functions)
 add_subdirectory(trajectory_sample)
 add_subdirectory(trajectory_handler)
 add_subdirectory(cldc)
+add_subdirectory(Clipper2/CPP)
 
 # Add sources
 # file(GLOB SOURCES "src/*.cpp" "main.cpp")
@@ -33,4 +34,14 @@ target_link_libraries(myapp PRIVATE
     feasibility_functions
     trajectory_sample
     trajectory_handler
+)
+
+add_executable(poc_boost poc_boost.cpp)
+target_link_libraries(poc_boost PRIVATE 
+    Boost::boost
+)
+
+add_executable(poc_boost_replacement poc_boost_replacement.cpp)
+target_link_libraries(poc_boost_replacement PRIVATE 
+    Clipper2
 )
