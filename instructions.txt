@@ -1,0 +1,6 @@
+inside the repo do
+mkdir build
+cd build
+cmake ..
+cmake --build .
+./myapp
