@@ -42,8 +42,11 @@ EigenPolyline ProjectionDomain::lowerProjectionDomainBorder() const {
     return this->lower_projection_domain_border_;
 }
 
+// bool ProjectionDomain::cartesianPointInProjectionDomain(double x, double y) const {
+//     return boost::geometry::covered_by(point_type(x, y), this->projection_domain_);
+// }
 bool ProjectionDomain::cartesianPointInProjectionDomain(double x, double y) const {
-    return boost::geometry::covered_by(point_type(x, y), this->projection_domain_);
+    return util_proj::pointInPolygon(point_type{x, y}, this->projection_domain_);
 }
 
 std::tuple<bool, bool> ProjectionDomain::curvilinearPointInProjectionDomain(const std::unique_ptr<Segment>& segment_ptr,
@@ -119,7 +122,7 @@ void ProjectionDomain::approximateCurvilinearProjectionDomain(const std::vector<
     }
 
     // create Boost polygon from border polyline
-    util_proj::polylineToBoostPolygon(this->curvilinear_projection_domain_border_,
+    util_proj::polylineToClipperPath(this->curvilinear_projection_domain_border_,
                                       this->curvilinear_projection_domain_);
 }
 
@@ -166,7 +169,7 @@ void ProjectionDomain::approximateProjectionDomain(const std::vector<std::unique
     // logger->debug("<approximateProjectionDomain()> Computing projection domain took: {} nanoseconds", duration);
 
     // create boost polygon for Cartesian projection domain from border polyline
-    util_proj::polylineToBoostPolygon(this->projection_domain_border_, this->projection_domain_);
+    util_proj::polylineToClipperPath(this->projection_domain_border_, this->projection_domain_);
 
     // approximate Curvilinear projection domain
     this->approximateCurvilinearProjectionDomain(segment_list,
@@ -408,21 +411,51 @@ std::vector<EigenPolyline> ProjectionDomain::determineSubsetOfPolygonWithinCurvi
     return this->polygonWithinProjectionDomain(polygon, this->curvilinear_projection_domain_);
 }
 
+// std::vector<EigenPolyline> ProjectionDomain::polygonWithinProjectionDomain(
+//         const EigenPolyline &polygon, const polygon_type &projection_domain) const {
+
+//     std::vector<EigenPolyline> polygons_within_projection_domain;
+//     if (polygon.size() == 0) return polygons_within_projection_domain;
+
+//     // over-approximate polygon with axis-aligned rectangle
+//     polygon_type poly_aabb;
+//     util_proj::overapproximatePolygonAABB(polygon, poly_aabb);
+
+//     if (boost::geometry::within(poly_aabb, projection_domain)) {
+//         polygons_within_projection_domain.push_back(polygon);
+//     } else {
+//         polygons_within_projection_domain = util_proj::polygonWithinPolygonBoost(polygon, projection_domain);
+//     }
+//     return polygons_within_projection_domain;
+// }
 std::vector<EigenPolyline> ProjectionDomain::polygonWithinProjectionDomain(
-        const EigenPolyline &polygon, const polygon_type &projection_domain) const {
+        const EigenPolyline& polygon, const polygon_type& projection_domain) const {
 
     std::vector<EigenPolyline> polygons_within_projection_domain;
     if (polygon.size() == 0) return polygons_within_projection_domain;
 
-    // over-approximate polygon with axis-aligned rectangle
+    // Over-approximate the polygon with an AABB (as Clipper path)
     polygon_type poly_aabb;
-    util_proj::overapproximatePolygonAABB(polygon, poly_aabb);
+    util_proj::overapproximatePolygonAABB(polygon, poly_aabb);  // output is a Clipper2Lib::PathD
 
-    if (boost::geometry::within(poly_aabb, projection_domain)) {
+    // Check if the bounding box is completely inside the projection domain
+    // Define containment as all AABB vertices inside projection_domain
+    bool all_inside = true;
+    for (const auto& pt : poly_aabb) {
+        if (!util_proj::pointInPolygon(pt, projection_domain)) {
+            all_inside = false;
+            break;
+        }
+    }
+
+    if (all_inside) {
         polygons_within_projection_domain.push_back(polygon);
     } else {
-        polygons_within_projection_domain = util_proj::polygonWithinPolygonBoost(polygon, projection_domain);
+        polygons_within_projection_domain =
+            util_proj::polygonWithinPolygonClipper(polygon, projection_domain);  // your new function
     }
+
     return polygons_within_projection_domain;
 }
+
 }  // namespace geometry

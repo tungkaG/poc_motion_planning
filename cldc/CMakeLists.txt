@@ -70,7 +70,8 @@ target_include_directories(crccosy
 target_link_libraries(crccosy
         PUBLIC
         Eigen3::Eigen
-        Boost::headers
+        # Boost::headers
+        Clipper2
         # Boost::geometry
 )
 
