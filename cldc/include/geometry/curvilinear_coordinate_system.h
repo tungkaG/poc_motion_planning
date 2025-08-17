@@ -15,9 +15,9 @@
 #include <Eigen/Dense>
 #include <Eigen/StdVector>
 
-#include <boost/geometry.hpp>
-#include <boost/geometry/geometries/point_xy.hpp>
-#include <boost/geometry/geometries/polygon.hpp>
+// #include <boost/geometry.hpp>
+// #include <boost/geometry/geometries/point_xy.hpp>
+// #include <boost/geometry/geometries/polygon.hpp>
 
 #include "geometry/application_settings.h"
 

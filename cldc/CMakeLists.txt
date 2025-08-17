@@ -51,7 +51,7 @@ if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.23.0)
 endif ()
 
 # set compile features
-target_compile_features(crccosy PUBLIC cxx_lambdas cxx_auto_type)
+# target_compile_features(crccosy PUBLIC cxx_lambdas cxx_auto_type)
 
 target_include_directories(crccosy
         PUBLIC
