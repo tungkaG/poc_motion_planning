@@ -649,18 +649,34 @@ int main() {
 
     trajectory_handler.evaluateAllTrajectories();
 
+    // for (const auto& trajectory : trajectory_handler.m_trajectories) {
+    //     printf("ID: %d, feasibility: %d, cost: %f\n", trajectory.m_uniqueId, trajectory.m_feasible, trajectory.m_cost);
+    //     // std::cout << "Feasibility map:" << std::endl;
+    //     // for (const auto& pair : trajectory.m_feasabilityMap) {
+    //     //     std::cout << pair.first << ": " << pair.second << std::endl;
+    //     // }
+    // }
+
+    const TrajectorySample* best_trajectory = nullptr;
+
     for (const auto& trajectory : trajectory_handler.m_trajectories) {
-        printf("ID: %d, feasibility: %d, cost: %f\n", trajectory.m_uniqueId, trajectory.m_feasible, trajectory.m_cost);
-        // std::cout << "Feasibility map:" << std::endl;
-        // for (const auto& pair : trajectory.m_feasabilityMap) {
-        //     std::cout << pair.first << ": " << pair.second << std::endl;
-        // }
+        if (trajectory.m_feasible == 1) {
+            if (best_trajectory == nullptr || trajectory.m_cost < best_trajectory->m_cost) {
+                best_trajectory = &trajectory;
+            }
+        }
     }
 
-    // std::vector<double> t;
-    // t.reserve(8);
-    // t.emplace_back(1.7);
-    // std::cout << "size of t: " << t.size() << std::endl;
+    if (best_trajectory) {
+    printf("Best feasible trajectory:\n");
+    printf("ID: %d, cost: %f\n", best_trajectory->m_uniqueId, best_trajectory->m_cost);
+
+    std::cout << "x: " << best_trajectory->m_cartesianSample.x.transpose() << std::endl;
+    std::cout << "y: " << best_trajectory->m_cartesianSample.y.transpose() << std::endl;
+    } else {
+        printf("No feasible trajectories found or m_cartesianSample is null.\n");
+    }
+
 }
 
 
